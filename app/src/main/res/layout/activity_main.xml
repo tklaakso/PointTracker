@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/recipes_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#A62A2A"
+                android:onClick="recipesButtonClicked"
+                android:text="Recipes"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="10dp" />
+
+            <Button
+                android:id="@+id/ingredients_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#A62A2A"
+                android:onClick="ingredientsButtonClicked"
+                android:text="Ingredients"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="10dp" />
+
+            <Button
+                android:id="@+id/conversions_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#A62A2A"
+                android:onClick="conversionsButtonClicked"
+                android:text="Conversions"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="10dp" />
+
+            <Button
+                android:id="@+id/units_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#A62A2A"
+                android:onClick="unitsButtonClicked"
+                android:text="Units"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="10dp" />
+
+            <Button
+                android:id="@+id/limits_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#A62A2A"
+                android:onClick="limitsButtonClicked"
+                android:text="Limits"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="10dp" />
+
+            <Button
+                android:id="@+id/tracker_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#A62A2A"
+                android:onClick="trackerButtonClicked"
+                android:text="Daily Tracker"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/export_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#A62A2A"
+                    android:onClick="exportButtonClicked"
+                    android:text="Export Preset"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="10dp" />
+
+                <Button
+                    android:id="@+id/import_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#A62A2A"
+                    android:onClick="importButtonClicked"
+                    android:text="Import Preset"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="10dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/settings_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#A62A2A"
+                android:onClick="settingsButtonClicked"
+                android:text="Settings"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="10dp" />
+
+        </LinearLayout>
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

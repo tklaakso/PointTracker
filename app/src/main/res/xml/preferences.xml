@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        app:key="x-app-id"
+        app:title="Nutritionix API ID"/>
+
+    <EditTextPreference
+        app:key="x-app-key"
+        app:title="Nutritionix API Key"/>
+
+</PreferenceScreen>
