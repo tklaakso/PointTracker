@@ -21,7 +21,7 @@ class UnitActivity : InteractiveListViewActivity("Units", MainActivity::class.ja
         lifecycleScope.launch {
             val db: PointDatabase = DatabaseClient(applicationContext).getDB()
             val units = db.unitDao().getAll()
-            layout.removeAllViews()
+            val viewsToAdd = mutableListOf<DeletableCardView>()
             for (unit in units) {
                 if (!itemFilter(unit.name))
                     continue
@@ -63,7 +63,13 @@ class UnitActivity : InteractiveListViewActivity("Units", MainActivity::class.ja
                             .show()
                     }
                 }
-                layout.addView(cardView)
+                viewsToAdd.add(cardView)
+            }
+            runOnUiThread {
+                layout.removeAllViews()
+                for (view in viewsToAdd) {
+                    layout.addView(view)
+                }
             }
         }
     }

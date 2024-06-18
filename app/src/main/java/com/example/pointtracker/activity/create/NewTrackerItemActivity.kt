@@ -102,6 +102,7 @@ class NewTrackerItemActivity : AppCompatActivity() {
     }
 
     private fun maximizeAmount(daily : Boolean) {
+        RecipeAnalyzer.invalidateCache()
         val unitBox = findViewById<AutoCompleteTextView>(R.id.trackerItemUnitBox)
         val amountBox = findViewById<EditText>(R.id.trackerItemAmountBox)
         val ingredientBox = findViewById<AutoCompleteTextView>(R.id.trackerItemIngredientBox)
@@ -113,7 +114,7 @@ class NewTrackerItemActivity : AppCompatActivity() {
             val db = DatabaseClient(applicationContext).getDB()
             val unit = db.unitDao().getByName(unitBox.text.toString())
             val ingredientText = ingredientBox.text.toString()
-            var ingredientAnalysis : Map<Int, Double>? = null
+            val ingredientAnalysis : Map<Int, Double>?
             if (db.ingredientDao().getByName(ingredientText) == null) {
                 val recipe = db.recipeDao().getByName(ingredientText)
                 ingredientAnalysis = RecipeAnalyzer.analyzeRecipe(applicationContext, IngredientAmount(unit!!.id, recipe!!.id, true, 1.0), recipe)

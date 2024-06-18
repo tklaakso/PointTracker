@@ -19,7 +19,7 @@ class ConversionActivity : InteractiveListViewActivity("Conversions", MainActivi
         lifecycleScope.launch {
             val db: PointDatabase = DatabaseClient(applicationContext).getDB()
             val conversions = db.conversionDao().getAll()
-            layout.removeAllViews()
+            val viewsToAdd = mutableListOf<DeletableCardView>()
             for (conversion in conversions) {
                 val unit1Name = db.unitDao().getById(conversion.unit1)!!.name
                 val unit2Name = db.unitDao().getById(conversion.unit2)!!.name
@@ -48,7 +48,13 @@ class ConversionActivity : InteractiveListViewActivity("Conversions", MainActivi
                         }
                     }
                 }
-                layout.addView(cardView)
+                viewsToAdd.add(cardView)
+            }
+            runOnUiThread {
+                layout.removeAllViews()
+                for (view in viewsToAdd) {
+                    layout.addView(view)
+                }
             }
         }
     }

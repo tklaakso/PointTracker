@@ -33,6 +33,7 @@ class TrackerUtil {
         }
 
         suspend fun getConsumptionAnalysis(context : Context, excludeTrackerItems : List<Int> = listOf()) : Triple<Pair<Map<Int, Double>, Map<Int, Double>>, Pair<Map<Int, Double>, Map<Int, Double>>, Map<Int, Int>> {
+            RecipeAnalyzer.invalidateCache()
             val db = DatabaseClient(context).getDB()
             val limits = db.limitDao().getAll()
             val dailyLimits = limits.filter { it.daily }

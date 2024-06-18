@@ -18,7 +18,7 @@ class LimitActivity : InteractiveListViewActivity("Limits", MainActivity::class.
         lifecycleScope.launch {
             val db: PointDatabase = DatabaseClient(applicationContext).getDB()
             val limits = db.limitDao().getAll()
-            layout.removeAllViews()
+            val viewsToAdd = mutableListOf<DeletableCardView>()
             for (limit in limits) {
                 val unitName = db.unitDao().getById(limit.unit)!!.name
                 val timePeriod = if (limit.daily) "daily" else "weekly"
@@ -43,7 +43,13 @@ class LimitActivity : InteractiveListViewActivity("Limits", MainActivity::class.
                         }
                     }
                 }
-                layout.addView(cardView)
+                viewsToAdd.add(cardView)
+            }
+            runOnUiThread {
+                layout.removeAllViews()
+                for (view in viewsToAdd) {
+                    layout.addView(view)
+                }
             }
         }
     }

@@ -10,6 +10,15 @@ import com.example.pointtracker.data.entity.Unit
 
 class RecipeAnalyzer {
     companion object {
+
+        private val ingredientMemo = HashMap<Int, Map<Int, Double>>()
+        private val recipeMemo = HashMap<Int, Map<Int, Double>>()
+
+        fun invalidateCache() {
+            ingredientMemo.clear()
+            recipeMemo.clear()
+        }
+
         private suspend fun getIngredientHierarchy(context : Context, ingredientId : Int) : List<Int> {
             val result = mutableListOf<Int>()
             val db = DatabaseClient(context).getDB()
@@ -23,6 +32,13 @@ class RecipeAnalyzer {
         }
 
         private suspend fun getAmounts(context : Context, ingredientAmount : IngredientAmount, units : List<Unit>, conversions : List<Conversion>, calculations : List<List<Conversion>>) : Map<Int, Double> {
+            if (ingredientMemo.containsKey(ingredientAmount.ingredient)) {
+                val result = HashMap(ingredientMemo[ingredientAmount.ingredient]!!)
+                for ((unit, amount) in result) {
+                    result[unit] = amount * ingredientAmount.amount
+                }
+                return result
+            }
             val conversionMap = HashMap<Pair<Int, Int>, MutableSet<Conversion>>()
             for (conversion in conversions) {
                 if (!conversionMap.containsKey(Pair(conversion.unit1, conversion.ingredient)))
@@ -41,7 +57,7 @@ class RecipeAnalyzer {
                 }
             }
             val foodItemAmountMap = units.associateBy({ it.id }, { -1.0 }).toMutableMap()
-            foodItemAmountMap[ingredientAmount.unit] = ingredientAmount.amount
+            foodItemAmountMap[ingredientAmount.unit] = 1.0
             val ingredientHierarchy = getIngredientHierarchy(context, ingredientAmount.ingredient)
             var modified = true
             while (modified) {
@@ -85,6 +101,10 @@ class RecipeAnalyzer {
                     }
                 }
             }
+            ingredientMemo[ingredientAmount.ingredient] = HashMap(foodItemAmountMap)
+            for ((unit, amount) in foodItemAmountMap) {
+                foodItemAmountMap[unit] = amount * ingredientAmount.amount
+            }
             return foodItemAmountMap
         }
 
@@ -124,7 +144,14 @@ class RecipeAnalyzer {
         suspend fun analyzeRecipe(context : Context, ingredientAmount: IngredientAmount, recipe : Recipe): Map<Int, Double> {
             val db = DatabaseClient(context).getDB()
             val foodItems = db.foodItemDao().getByRecipe(recipe.id)
-            val result = analyzeFoodItems(context, recipe.scale, recipe.portions, foodItems).toMutableMap()
+            val result : MutableMap<Int, Double>
+            if (recipeMemo.containsKey(recipe.id)) {
+                result = HashMap(recipeMemo[recipe.id]!!)
+            }
+            else {
+                result = analyzeFoodItems(context, recipe.scale, recipe.portions, foodItems).toMutableMap()
+                recipeMemo[recipe.id] = HashMap(result)
+            }
             if (recipe.finalWeightUnit != null && recipe.finalWeightAmount != null) {
                 result[recipe.finalWeightUnit] = recipe.finalWeightAmount
             }
@@ -133,9 +160,11 @@ class RecipeAnalyzer {
             val ingredientUnitObj = db.unitDao().getById(ingredientUnit)
             if (ingredientUnitObj!!.name == "whole") {
                 scaleFactor = ingredientAmount.amount
+                result[ingredientUnitObj.id] = 1.0 / scaleFactor
             }
             else if (ingredientUnitObj.name == "portion") {
                 scaleFactor = ingredientAmount.amount / recipe.portions
+                result[ingredientUnitObj.id] = 1.0 / scaleFactor
             }
             else if (ingredientUnit in result) {
                 scaleFactor = ingredientAmount.amount / result[ingredientUnit]!!

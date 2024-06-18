@@ -17,7 +17,7 @@ class RecipeActivity : InteractiveListViewActivity("Recipes", MainActivity::clas
         lifecycleScope.launch {
             val db: PointDatabase = DatabaseClient(applicationContext).getDB()
             val recipes = db.recipeDao().getAll()
-            layout.removeAllViews()
+            val viewsToAdd = mutableListOf<DeletableCardView>()
             for (recipe in recipes) {
                 if (!itemFilter(recipe.name))
                     continue
@@ -43,7 +43,13 @@ class RecipeActivity : InteractiveListViewActivity("Recipes", MainActivity::clas
                         }
                     }
                 }
-                layout.addView(cardView)
+                viewsToAdd.add(cardView)
+            }
+            runOnUiThread {
+                layout.removeAllViews()
+                for (view in viewsToAdd) {
+                    layout.addView(view)
+                }
             }
         }
     }

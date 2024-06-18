@@ -184,6 +184,7 @@ class NewRecipeActivity : AppCompatActivity() {
 
     private suspend fun refreshAnalysis() {
         analysisMutex.lock()
+        RecipeAnalyzer.invalidateCache()
         val analysisList = findViewById<LinearLayout>(R.id.analysisList)
         val unitsMap = RecipeAnalyzer.analyzeFoodItems(applicationContext, scale, portions, foodItems)
         val db = DatabaseClient(applicationContext).getDB()
