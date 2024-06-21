@@ -32,10 +32,10 @@ class RecipeAnalyzer {
         }
 
         private suspend fun getAmounts(context : Context, ingredientAmount : IngredientAmount, units : List<Unit>, conversions : List<Conversion>, calculations : List<List<Conversion>>) : Map<Int, Double> {
-            if (ingredientMemo.containsKey(ingredientAmount.ingredient)) {
+            if (ingredientMemo.containsKey(ingredientAmount.ingredient) && ingredientAmount.unit in ingredientMemo[ingredientAmount.ingredient]!!) {
                 val result = HashMap(ingredientMemo[ingredientAmount.ingredient]!!)
                 for ((unit, amount) in result) {
-                    result[unit] = amount * ingredientAmount.amount
+                    result[unit] = amount * (ingredientAmount.amount / ingredientMemo[ingredientAmount.ingredient]!![ingredientAmount.unit]!!)
                 }
                 return result
             }
