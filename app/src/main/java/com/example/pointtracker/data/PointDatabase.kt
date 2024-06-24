@@ -18,8 +18,8 @@ import com.example.pointtracker.data.inter.RecipeDao
 import com.example.pointtracker.data.inter.TrackerItemDao
 import com.example.pointtracker.data.inter.UnitDao
 
-@Database(entities = [Conversion::class, FoodItem::class, Ingredient::class, Recipe::class, Unit::class, Limit::class, TrackerItem::class], version = 2, autoMigrations = [
-    AutoMigration (from = 1, to = 2)
+@Database(entities = [Conversion::class, FoodItem::class, Ingredient::class, Recipe::class, Unit::class, Limit::class, TrackerItem::class], version = 3, autoMigrations = [
+    AutoMigration (from = 1, to = 2), AutoMigration (from = 2, to = 3)
 ])
 abstract class PointDatabase : RoomDatabase() {
     abstract fun conversionDao(): ConversionDao

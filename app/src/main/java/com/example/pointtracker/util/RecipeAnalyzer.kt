@@ -153,7 +153,11 @@ class RecipeAnalyzer {
                 recipeMemo[recipe.id] = HashMap(result)
             }
             if (recipe.finalWeightUnit != null && recipe.finalWeightAmount != null) {
-                result[recipe.finalWeightUnit] = recipe.finalWeightAmount
+                val weightAnalysis = analyzeIngredient(context, recipe.finalWeightUnit, recipe.finalWeightAmount, db.ingredientDao().getByName("all")!!.id)
+                for ((unit, amount) in weightAnalysis) {
+                    if (amount >= 0)
+                        result[unit] = amount
+                }
             }
             var scaleFactor = ingredientAmount.amount
             val ingredientUnit = ingredientAmount.unit

@@ -38,7 +38,8 @@ class TrackerActivity : InteractiveListViewActivity("Daily Tracker", MainActivit
                     continue
                 val unitName = db.unitDao().getById(trackerItem.unit)!!.name
                 val ingredientName = if (trackerItem.isRecipe) db.recipeDao().getById(trackerItem.recipe!!)!!.name else db.ingredientDao().getById(trackerItem.ingredient!!)!!.name
-                val trackerItemText = "${trackerItem.amount} $unitName $ingredientName"
+                val amount = trackerItem.amount - (trackerItem.finalAmount ?: 0.0)
+                val trackerItemText = "$amount $unitName $ingredientName"
                 if (!itemFilter(trackerItemText))
                     continue
                 val cardView = DeletableCardView(activity)
@@ -47,6 +48,8 @@ class TrackerActivity : InteractiveListViewActivity("Daily Tracker", MainActivit
                     val intent = Intent(activity, NewTrackerItemActivity::class.java)
                     intent.putExtra("id", trackerItem.id)
                     intent.putExtra("amount", trackerItem.amount)
+                    if (trackerItem.finalAmount != null)
+                        intent.putExtra("finalAmount", trackerItem.finalAmount)
                     intent.putExtra("unit", trackerItem.unit)
                     intent.putExtra("isRecipe", trackerItem.isRecipe)
                     intent.putExtra("recipe", trackerItem.recipe)

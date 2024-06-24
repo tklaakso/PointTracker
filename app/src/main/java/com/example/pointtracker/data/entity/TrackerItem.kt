@@ -31,6 +31,7 @@ data class TrackerItem (
     @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "unit") val unit: Int,
     @ColumnInfo(name = "amount") val amount: Double,
+    @ColumnInfo(name = "final_amount") val finalAmount: Double?,
     @ColumnInfo(name = "is_recipe") val isRecipe: Boolean,
     @ColumnInfo(name = "recipe") val recipe: Int?,
     @ColumnInfo(name = "ingredient") val ingredient: Int?,

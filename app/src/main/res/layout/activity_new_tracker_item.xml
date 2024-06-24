@@ -36,6 +36,26 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ingredient: "
+                    android:textSize="20sp" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/trackerItemIngredientBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
                     android:id="@+id/textView2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -63,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:text="Amount: "
+                    android:text="Quantity: "
                     android:textSize="20sp" />
 
                 <EditText
@@ -82,18 +102,20 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/textView13"
+                    android:id="@+id/textView17"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Ingredient: "
+                    android:text="Final: "
                     android:textSize="20sp" />
 
-                <AutoCompleteTextView
-                    android:id="@+id/trackerItemIngredientBox"
+                <EditText
+                    android:id="@+id/trackerItemFinalAmountBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2" />
+                    android:layout_weight="2"
+                    android:ems="10"
+                    android:inputType="numberDecimal" />
             </LinearLayout>
 
             <LinearLayout

@@ -67,6 +67,9 @@ class NewTrackerItemActivity : AppCompatActivity() {
             if (extras.containsKey("amount")) {
                 findViewById<EditText>(R.id.trackerItemAmountBox).setText(extras.getDouble("amount").toString())
             }
+            if (extras.containsKey("finalAmount")) {
+                findViewById<EditText>(R.id.trackerItemFinalAmountBox).setText(extras.getDouble("finalAmount").toString())
+            }
             if (extras.containsKey("ingredient")) {
                 if (extras.containsKey("isRecipe") && extras.getBoolean("isRecipe")) {
                     findViewById<AutoCompleteTextView>(R.id.trackerItemIngredientBox).setText(db.recipeDao().getById(extras.getInt("recipe"))!!.name)
@@ -164,10 +167,13 @@ class NewTrackerItemActivity : AppCompatActivity() {
     private suspend fun validateInputs() : Boolean {
         val db = DatabaseClient(applicationContext).getDB()
         val amountBox = findViewById<EditText>(R.id.trackerItemAmountBox)
+        val finalAmountBox = findViewById<EditText>(R.id.trackerItemFinalAmountBox)
         val unitBox = findViewById<AutoCompleteTextView>(R.id.trackerItemUnitBox)
         val ingredientBox = findViewById<AutoCompleteTextView>(R.id.trackerItemIngredientBox)
         try {
             amountBox.text.toString().toDouble()
+            if (finalAmountBox.text.isNotEmpty())
+                finalAmountBox.text.toString().toDouble()
             db.unitDao().getByName(unitBox.text.toString())!!
             if (!(db.ingredientDao().getByName(ingredientBox.text.toString()) != null || db.recipeDao().getByName(ingredientBox.text.toString()) != null))
                 throw Throwable()
@@ -181,6 +187,7 @@ class NewTrackerItemActivity : AppCompatActivity() {
     fun onConfirm(view : View) {
         val trackerItemUnitBox = findViewById<AutoCompleteTextView>(R.id.trackerItemUnitBox)
         val trackerItemAmountBox = findViewById<EditText>(R.id.trackerItemAmountBox)
+        val trackerItemFinalAmountBox = findViewById<EditText>(R.id.trackerItemFinalAmountBox)
         val trackerItemIngredientBox = findViewById<AutoCompleteTextView>(R.id.trackerItemIngredientBox)
         lifecycleScope.launch {
             if (!validateInputs()) {
@@ -200,11 +207,12 @@ class NewTrackerItemActivity : AppCompatActivity() {
             else {
                 ingredientId = db.ingredientDao().getByName(ingredientText)!!.id
             }
+            val trackerItemFinalAmount : Double? = if (trackerItemFinalAmountBox.text.isEmpty()) null else trackerItemFinalAmountBox.text.toString().toDouble()
             if (original != null) {
-                trackerItemDao.update(TrackerItem(original!!.id, trackerItemUnit!!.id, trackerItemAmountBox.text.toString().toDouble(), isRecipe, if (isRecipe) ingredientId else null, if (isRecipe) null else ingredientId, getDayStartTime()))
+                trackerItemDao.update(TrackerItem(original!!.id, trackerItemUnit!!.id, trackerItemAmountBox.text.toString().toDouble(), trackerItemFinalAmount, isRecipe, if (isRecipe) ingredientId else null, if (isRecipe) null else ingredientId, getDayStartTime()))
             }
             else{
-                trackerItemDao.insert(TrackerItem(0, trackerItemUnit!!.id, trackerItemAmountBox.text.toString().toDouble(), isRecipe, if (isRecipe) ingredientId else null, if (isRecipe) null else ingredientId, getDayStartTime()))
+                trackerItemDao.insert(TrackerItem(0, trackerItemUnit!!.id, trackerItemAmountBox.text.toString().toDouble(), trackerItemFinalAmount, isRecipe, if (isRecipe) ingredientId else null, if (isRecipe) null else ingredientId, getDayStartTime()))
             }
             val intent = Intent(this@NewTrackerItemActivity, TrackerActivity::class.java)
             startActivity(intent)

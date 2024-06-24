@@ -47,7 +47,7 @@ class TrackerUtil {
                 val trackerItems = db.trackerItemDao().getByDate(day).filter { !excludeTrackerItems.contains(it.id) }
                 val unitsMap = RecipeAnalyzer.analyzeIngredientAmounts(
                     context,
-                    trackerItems.map { IngredientAmount(it.unit, (if (it.isRecipe) it.recipe else it.ingredient)!!, it.isRecipe, it.amount) },
+                    trackerItems.map { IngredientAmount(it.unit, (if (it.isRecipe) it.recipe else it.ingredient)!!, it.isRecipe, it.amount - (it.finalAmount ?: 0.0)) },
                     1.0,
                     1.0
                 )
