@@ -80,6 +80,13 @@
                 android:layout_height="wrap_content"
                 android:text="Import from Nutritionix" />
 
+            <Button
+                android:id="@+id/importFromBarcodeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onImportFromBarcodeClicked"
+                android:text="Import From Barcode" />
+
             <LinearLayout
                 android:id="@+id/conversionsLayout"
                 android:layout_width="match_parent"

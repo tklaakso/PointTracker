@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,6 +30,8 @@ import com.example.pointtracker.util.Nutritionix
 import com.example.pointtracker.util.NutritionixFoodItem
 import com.example.pointtracker.util.Util
 import com.google.gson.Gson
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.common.Barcode
 import kotlinx.coroutines.launch
 import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
@@ -48,6 +51,13 @@ class NewIngredientActivity : AppCompatActivity() {
     private var perUnitBox : AutoCompleteTextView? = null
 
     private lateinit var ingredientNameAdapter : ArrayAdapter<NutritionixFoodItem>
+
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val data: Intent = result.data ?: return@registerForActivityResult
+            setFromExtras(data)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,13 +146,17 @@ class NewIngredientActivity : AppCompatActivity() {
                 perUnit.addView(perUnitBox)
                 conversionsLayout.addView(perUnit)
             }
-            setFromExtras()
+            setFromExtras(intent)
         }
     }
 
     private fun setFromNixData(data : Map<*, *>) {
         val food = (data["foods"] as List<*>)[0] as Map<String, *>
+        val ingredientNameBox = findViewById<AutoCompleteTextView>(R.id.ingredientNameBox)
         lifecycleScope.launch {
+            if (food.containsKey("food_name")) {
+                ingredientNameBox.setText(food["food_name"] as String)
+            }
             val unitNamesToIds = fetchShownUnits().associateBy({ it.name }, { it.id })
             if (unitNamesToIds.isEmpty())
                 return@launch
@@ -184,7 +198,7 @@ class NewIngredientActivity : AppCompatActivity() {
         }
     }
 
-    private fun setFromExtras() {
+    private fun setFromExtras(intent : Intent) {
         if (intent.extras == null)
             return
         lifecycleScope.launch {
@@ -200,6 +214,12 @@ class NewIngredientActivity : AppCompatActivity() {
                 findViewById<AutoCompleteTextView>(R.id.parentTextView).setText(db.ingredientDao().getById(extras.getInt("parent"))!!.name)
             }
             setFromConversions()
+            if (extras.containsKey("barcodeValue")) {
+                val barcodeValue = extras.getString("barcodeValue")
+                Nutritionix.getNutritionalInfoFromUPC(applicationContext, barcodeValue!!) { result: Map<*, *> ->
+                    setFromNixData(result)
+                }
+            }
         }
     }
 
@@ -254,6 +274,11 @@ class NewIngredientActivity : AppCompatActivity() {
         val db : PointDatabase = DatabaseClient(applicationContext).getDB()
         val units : List<Unit> = db.unitDao().getAllFlaggedForConversion()
         return units
+    }
+
+    fun onImportFromBarcodeClicked(view : View) {
+        val intent = Intent(this, CameraActivity::class.java)
+        resultLauncher.launch(intent)
     }
 
     private suspend fun validateInputs() : Boolean {

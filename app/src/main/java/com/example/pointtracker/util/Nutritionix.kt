@@ -119,10 +119,9 @@ class Nutritionix {
             request.start()
         }
 
-        fun getNutritionalInfoFromNixItemId(context : Context, nixItemId : String, callback : (Map<*, *>) -> Unit) {
+        private fun foodItemSearchQuery(context : Context, searchUrl : String, callback: (Map<*, *>) -> Unit) {
             val builder = CronetEngine.Builder(context)
             val cronetEngine = builder.build()
-            val searchUrl = "https://trackapi.nutritionix.com/v2/search/item/?nix_item_id=$nixItemId"
             val executor = Executors.newSingleThreadExecutor()
             val requestBuilder = cronetEngine.newUrlRequestBuilder(searchUrl, readJSONResponse(callback), executor)
             requestBuilder.setHttpMethod("GET")
@@ -137,6 +136,14 @@ class Nutritionix {
             requestBuilder.addHeader("x-app-key", appKey)
             val request = requestBuilder.build()
             request.start()
+        }
+
+        fun getNutritionalInfoFromNixItemId(context : Context, nixItemId : String, callback : (Map<*, *>) -> Unit) {
+            foodItemSearchQuery(context, "https://trackapi.nutritionix.com/v2/search/item/?nix_item_id=$nixItemId", callback)
+        }
+
+        fun getNutritionalInfoFromUPC(context : Context, upc : String, callback : (Map<*, *>) -> Unit) {
+            foodItemSearchQuery(context, "https://trackapi.nutritionix.com/v2/search/item/?upc=$upc", callback)
         }
     }
 }
